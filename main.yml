@@ -1,0 +1,26 @@
+---
+- hosts: raspi
+  become: true
+  pre_tasks:
+    - name: load configurations from config file
+      ansible.builtin.include_vars: "{{ item }}"
+      loop:
+        - example.config.yml
+        - config.yml
+    - name: Ensure apt cache is updated
+      ansible.builtin.apt:
+        cache_valid_time: 3600
+      when:
+        - ansible_facts.os_family == "Debian"
+  handlers:
+    - name: Include handlers
+      ansible.builtin.import_tasks: handlers/main.yml
+  tasks:
+    - name: Setup Docker.
+      ansible.builtin.import_tasks: tasks/docker.yml
+    - name: Setup Pi Hole
+      ansible.builtin.import_tasks: tasks/pi-hole.yml
+      when: pihole_enable
+    - name: Setup Home Assistant
+      ansible.builtin.import_tasks: tasks/home-assistant.yml
+      when: home_assistant_enable

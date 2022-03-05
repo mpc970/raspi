@@ -1,0 +1,31 @@
+# {{ ansible_managed }}
+---
+version: "3"
+
+# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    hostname: '{{ ansible_facts['hostname'] }}'
+    ports:
+      - "{{ ansible_facts['default_ipv4']['address'] }}:53:53/tcp"
+      - "{{ ansible_facts['default_ipv4']['address'] }}:53:53/udp"
+      - "{{ ansible_facts['default_ipv4']['address'] }}:67:67/udp"
+      - "{{ ansible_facts['default_ipv4']['address'] }}:80:80/tcp"
+      - "{{ ansible_facts['default_ipv4']['address'] }}:443:443/tcp"
+    environment:
+      TZ: '{{ pihole_timezone }}'
+      WEBPASSWORD: '{{ pihole_password }}'
+      ServerIP: '{{ ansible_facts['default_ipv4']['address'] }}'
+      DNSSEC: '{{ pihole_dnssec }}'
+      REV_SERVER: '{{ pihole_rev_server }}'
+      REV_SERVER_TARGET: '{{ pihole_rev_server_target }}'
+      REV_SERVER_DOMAIN: '{{ pihole_rev_server_domain }}'
+      PIHOLE_DNS_: "1.1.1.1;8.8.8.8"
+    volumes:
+      - './etc-pihole/:/etc/pihole/'
+      - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
