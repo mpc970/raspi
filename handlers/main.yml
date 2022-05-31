@@ -12,3 +12,9 @@
     build: false
     restarted: true
   become: false
+- name: Restart Syncthing
+  community.docker.docker_compose:
+    project_src: "{{ config_dir }}/syncthing/"
+    build: false
+    restarted: true
+  become: false

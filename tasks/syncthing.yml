@@ -1,0 +1,23 @@
+---
+- name: Create Syncthing folder on Pi.
+  ansible.builtin.file:
+    path: "{{ config_dir }}/syncthing"
+    state: directory
+    mode: 0755
+  become: false
+
+- name: Copy Syncthing docker-compose template to Pi.
+  ansible.builtin.template:
+    src: templates/syncthing-docker-compose.yml.j2
+    dest: "{{ config_dir }}/syncthing/docker-compose.yml"
+    mode: '0640'
+  become: false
+  notify: Restart Syncthing
+
+# TODO: The first time this playbook is run, the `pi` user may not be added
+# to the `docker` group, so this task may fail.
+- name: Ensure Syncthing is running.
+  community.docker.docker_compose:
+    project_src: "{{ config_dir }}/syncthing/"
+    build: false
+  become: false

@@ -24,3 +24,6 @@
     - name: Setup Home Assistant
       ansible.builtin.import_tasks: tasks/home-assistant.yml
       when: home_assistant_enable
+    - name: Setup Syncthing
+      ansible.builtin.import_tasks: tasks/syncthing.yml
+      when: syncthing_enable

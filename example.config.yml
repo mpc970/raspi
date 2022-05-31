@@ -18,3 +18,6 @@ monitoring_grafana_admin_password: "admin"
 
 # Home assistant
 home_assistant_enable: true
+
+# Syncthing
+syncthing_enable: true
