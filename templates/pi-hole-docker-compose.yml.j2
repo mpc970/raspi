@@ -9,6 +9,8 @@ services:
     image: pihole/pihole:latest
     hostname: '{{ ansible_facts['hostname'] }}'
     ports:
+      - "{{ ansible_facts['default_ipv6']['address'] }}:53:53/tcp"
+      - "{{ ansible_facts['default_ipv6']['address'] }}:53:53/udp"
       - "{{ ansible_facts['default_ipv4']['address'] }}:53:53/tcp"
       - "{{ ansible_facts['default_ipv4']['address'] }}:53:53/udp"
       - "{{ ansible_facts['default_ipv4']['address'] }}:67:67/udp"
@@ -17,10 +19,13 @@ services:
     environment:
       TZ: '{{ pihole_timezone }}'
       WEBPASSWORD: '{{ pihole_password }}'
-      ServerIP: '{{ ansible_facts['default_ipv4']['address'] }}'
+      FTLCONF_REPLY_ADDR4: '{{ ansible_facts['default_ipv4']['address'] }}'
+      FTLCONF_REPLY_ADDR6: '{{ ansible_facts['default_ipv6']['address'] }}'
       DNSSEC: '{{ pihole_dnssec }}'
+      DNS_FQDN_REQUIRED: '{{ pihole_dns_fqdn_required }}'
       REV_SERVER: '{{ pihole_rev_server }}'
       REV_SERVER_TARGET: '{{ pihole_rev_server_target }}'
+      REV_SERVER_CIDR: '{{ pihole_rev_server_cidr }}'
       REV_SERVER_DOMAIN: '{{ pihole_rev_server_domain }}'
       PIHOLE_DNS_: "1.1.1.1;8.8.8.8"
     volumes:
